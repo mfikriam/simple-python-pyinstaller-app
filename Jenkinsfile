@@ -10,17 +10,23 @@ node {
         docker.image('qnib/pytest').inside {
             sh 'py.test --junitxml=test-reports/results.xml sources/test_calc.py'
         }
+        
         step([$class: 'JUnitResultArchiver', testResults: 'test-reports/results.xml'])
     }
 
     stage('Deliver') {
-        docker.image('python:2-alpine').inside {
-            sh 'pip install pyinstaller'
-            sh 'pyinstaller --onefile sources/add2vals.py'
+        env.VOLUME = "${pwd()}/sources:/src"
+        env.IMAGE = 'cdrx/pyinstaller-linux:python2'
+        
+        dir("${env.BUILD_ID}") {
+            unstash('compiled-results')
+            sh "docker run --rm -v ${env.VOLUME} ${env.IMAGE} 'pyinstaller -F add2vals.py'"
         }
+        
         post {
             success {
-                archiveArtifacts 'dist/add2vals'
+                archiveArtifacts "${env.BUILD_ID}/sources/dist/add2vals"
+                sh "docker run --rm -v ${env.VOLUME} ${env.IMAGE} 'rm -rf build dist'"
             }
         }
     }
