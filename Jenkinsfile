@@ -10,7 +10,7 @@ node {
         docker.image('qnib/pytest').inside {
             sh 'py.test --junitxml=test-reports/results.xml sources/test_calc.py'
         }
-        
+
         step([$class: 'JUnitResultArchiver', testResults: 'test-reports/results.xml'])
     }
 
@@ -20,7 +20,7 @@ node {
         
         dir("${env.BUILD_ID}") {
             unstash('compiled-results')
-            sh "docker run --rm -v ${env.VOLUME} ${env.IMAGE} 'pyinstaller -F add2vals.py'"
+            sh "docker run -t --rm -v ${env.VOLUME} ${env.IMAGE} pyinstaller -F add2vals.py"
         }
         
         post {
