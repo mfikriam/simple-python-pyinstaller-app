@@ -12,7 +12,7 @@ node {
         }
         post {
             always {
-                junit 'test-reports/results.xml'
+                step([$class: 'JUnitResultArchiver', testResults: 'test-reports/results.xml'])
             }
         }
     }
