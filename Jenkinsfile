@@ -20,7 +20,7 @@ node {
         
         dir("${env.BUILD_ID}") {
             unstash('compiled-results')
-            sh "docker run -t --rm -v ${env.VOLUME} ${env.IMAGE} pyinstaller -F /src/add2vals.py"
+            sh "docker run -t --rm -v ${env.VOLUME} ${env.IMAGE} pyinstaller -F -n add2vals /src/add2vals.py"
         }
         
         post {
