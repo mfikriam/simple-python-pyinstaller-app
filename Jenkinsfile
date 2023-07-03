@@ -8,7 +8,7 @@ node {
     
     stage('Test') {
         docker.image('qnib/pytest').inside {
-            sh 'py.test --junit-xml test-reports/results.xml sources/test_calc.py'
+            sh 'py.test --junitxml=test-reports/results.xml sources/test_calc.py'
         }
         post {
             always {
@@ -23,13 +23,13 @@ node {
         
         dir("${env.BUILD_ID}") {
             unstash('compiled-results')
-            sh "docker run --rm -v ${env.VOLUME} ${env.IMAGE} 'pyinstaller -F add2vals.py'"
+            sh "docker run --rm -v ${env.VOLUME} ${env.IMAGE} pyinstaller -F add2vals.py"
         }
         
         post {
             success {
                 archiveArtifacts "${env.BUILD_ID}/sources/dist/add2vals"
-                sh "docker run --rm -v ${env.VOLUME} ${env.IMAGE} 'rm -rf build dist'"
+                sh "docker run --rm -v ${env.VOLUME} ${env.IMAGE} rm -rf build dist"
             }
         }
     }
