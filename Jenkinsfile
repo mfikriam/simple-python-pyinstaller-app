@@ -14,7 +14,7 @@ node {
     }
 
     stage('Deliver') {
-        docker.image('cdrx/pyinstaller-linux:python2').inside {
+        docker.image('python:2-alpine').inside {
             sh 'pyinstaller --onefile sources/add2vals.py'
         }
         post {
